@@ -4,17 +4,28 @@
     
     <div class="card shadow">
       <div class="card-body">
-        <h2 class="card-title fw-bold">{{ producto.nombre }}</h2>
-        <p class="card-text fs-5 text-muted">{{ producto.descripcion }}</p>
-        <h3 class="text-success">${{ producto.precio }}</h3>
-        <p class="mt-3"><strong>Stock disponible:</strong> {{ producto.stock }}</p>
+        <div class="d-flex flex-row">
+          
+          <div class="flex-shrink-0" style="width: 40%; padding-right: 20px;">
+            <img 
+              :src="producto.imagen_url" 
+              :alt="producto.nombre" 
+              class="img-fluid rounded"
+            />
+          </div>
+
+          <div class="flex-grow-1">
+            <h2 class="card-title fw-bold">{{ producto.nombre }}</h2>
+            <p class="card-text fs-5 text-muted">{{ producto.descripcion }}</p>
+            <h3 class="text-success">${{ producto.precio }}</h3>
+            <p class="mt-3"><strong>Stock disponible:</strong> {{ producto.stock }}</p>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
-  <div class="container mt-5" v-else>
-    <p>Cargando información del producto...</p>
-  </div>
-</template>
+  </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
@@ -32,7 +43,8 @@ const volver = () => {
 onMounted(async () => {
   try {
     const respuesta = await axios.get(`http://localhost:8000/api/productos/${props.id}`)
-    producto.value = respuesta.data
+    producto.value = respuesta.data.data || respuesta.data
+    console.log("Datos recibidos:", producto.value)
   } catch (error) {
     console.error('Error al cargar el producto:', error)
   }

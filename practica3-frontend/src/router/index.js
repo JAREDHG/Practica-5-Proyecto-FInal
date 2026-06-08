@@ -1,50 +1,32 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// Importamos tu store de autenticación de la práctica anterior
 import { useAuthStore } from '../stores/auth.js'
 
 const routes = [
-  // --- RUTAS PÚBLICAS ---
   { path: '/', component: () => import('../views/HomeView.vue') },
   { path: '/catalogo', component: () => import('../views/CatalogoView.vue') },
   {
     path: '/catalogo/:id',
     component: () => import('../views/ProductoDetalle.vue'),
-    props: true, // pasa el :id como prop al componente
+    props: true,
   },
+  { path: '/carrito', name: 'carrito', component: () => import('../views/CartView.vue') },
+  { path: '/login', name: 'login', component: () => import('../views/LoginView.vue') },
+  { path: '/register', name: 'register', component: () => import('../views/RegisterView.vue') },
 
-  {
-    path: '/carrito',
-    name: 'carrito',
-    component: () => import('../views/CartView.vue')
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('../views/LoginView.vue')
-  },
-  {
-    path: '/register',
-    name: 'register',
-    component: () => import('../views/RegisterView.vue')
-  },
-
-  // --- RUTAS PROTEGIDAS (Panel de Administración) ---
+  // --- RUTAS PROTEGIDAS (Admin) ---
   {
     path: '/admin',
+    redirect: '/admin/dashboard',
     component: () => import('../layouts/AdminLayout.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true }, // Se añade requiresAdmin
     children: [
-      { path: '', component: () => import('../views/admin/Dashboard.vue') },
-      { path: 'productos', component: () => import('../views/admin/Productos.vue') },
+      { path: 'dashboard', name: 'Dashboard', component: () => import('../views/admin/Dashboard.vue') },
+      { path: 'crear', name: 'CrearProducto', component: () => import('../views/admin/CrearProducto.vue') },
+      { path: 'editar', name: 'EditarProducto', component: () => import('../views/admin/EditarProducto.vue') }
     ]
   },
 
-  // --- RUTA CATCH-ALL (Error 404) ---
-  {
-    path: '/:pathMatch(.*)*',
-    name: 'NotFound',
-    component: () => import('../views/NotFound.vue')
-  },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('../views/NotFound.vue') },
 ]
 
 const router = createRouter({
@@ -52,20 +34,22 @@ const router = createRouter({
   routes
 })
 
-// --- GUARD GLOBAL DE NAVEGACIÓN ---
+// --- GUARD GLOBAL ---
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
-  // Inicializar usuario si hay token guardado
   if (auth.token && !auth.user) {
-    // Nota: Necesitaremos asegurar que fetchUser exista en auth.js
     await auth.fetchUser()
   }
 
-  // Si la ruta requiere autenticación y NO está autenticado
+  // 1. Verificación de Autenticación
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    // Se manda al login, pero se guarda a dónde quería ir
     return { path: '/login', query: { redirect: to.fullPath } }
+  }
+
+  // 2. Verificación de ROL ADMIN (Punto 4.7.5)
+  if (to.meta.requiresAdmin && auth.user?.role !== 'admin') {
+    return { path: '/' } // Si no es admin, lo expulsamos al Home
   }
 })
 

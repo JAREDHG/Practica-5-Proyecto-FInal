@@ -1,31 +1,49 @@
-# Práctica 04: Carrito de Compras con Pinia y Backend Laravel
+# Práctica 05: Proyecto Integrador
 
-Proyecto desarrollado como parte del curso de Desarrollo Full-Stack, enfocado en la implementación de un **Carrito de Compras** con gestión de estado global, persistencia de datos y transacciones seguras.
+Proyecto integrador desarrollado como una Single Page Application (SPA), utilizando **Laravel** para el backend (API REST) y **Vue.js** para el frontend.
 
 ## Descripción del Proyecto
-Este sistema amplía la funcionalidad de la SPA, integrando **Pinia** para la gestión reactiva del estado del carrito y sincronización automática con `localStorage`. Incluye un flujo completo de compra conectado a una API REST segura.
+Este sistema centraliza la gestión de inventario y el flujo de ventas. Integra **Pinia** para la gestión reactiva del estado, **Laravel Sanctum** para la seguridad de la API y un **Panel Administrativo** protegido mediante control de roles (RBAC).
 
 ## Tecnologías Utilizadas
 
 ### Frontend
 - **Vue 3 (Vite):** Interfaz reactiva y moderna.
-- **Pinia:** Gestión de estado global (Carrito, cantidades y totales).
-- **Axios:** Consumo de servicios RESTful.
-- **Bootstrap 5:** Diseño responsivo y componentes de UI.
+- **Pinia:** Gestión de estado global (Carrito, autenticación y sesión).
+- **Axios:** Consumo de servicios RESTful con manejo de estados de carga.
+- **Bootstrap 5:** Diseño responsivo y componentes de UI profesional.
 
 ### Backend
 - **Laravel 10:** API RESTful.
-- **Laravel Sanctum:** Protección de endpoints de pedidos.
-- **MariaDB:** Base de datos relacional (Relación muchos a muchos: `pedidos` y `productos`).
+- **Laravel Sanctum:** Protección de endpoints y gestión de tokens.
+- **MariaDB:** Base de datos relacional con control de usuarios y roles.
 
-## Características Principales
-- **Estado Global:** Gestión de items, cálculos de totales y getters mediante Pinia.
-- **Persistencia:** Sincronización transparente con `localStorage` para persistir el carrito tras recargas.
-- **Flujo de Compra:** Finalización de pedidos mediante peticiones protegidas (Auth: Sanctum).
-- **Interfaz Reactiva:** Botones dinámicos en catálogo y badge de carrito en tiempo real.
+## Características Implementadas (Parte D)
+- **Validación en Frontend:** Verificación de datos antes del envío en formularios.
+- **UX Profesional:** Implementación de *loading spinners* y alertas de éxito/error con auto-cierre.
+- **Paginación Dinámica:** Catálogo de productos eficiente (10 ítems por vista).
+- **Seguridad y Roles:** Panel administrativo protegido; acceso restringido solo para administradores.
+- **Persistencia:** Gestión de estado global con sincronización en `localStorage`.
 
-## ⚙️ Instrucciones de Instalación
-1. **Backend:** `cd backend`, `composer install`, `php artisan migrate`, `php artisan serve`.
-2. **Frontend:** `cd frontend`, `npm install`, `npm run dev`.
+## Instrucciones de Instalación
 
-**Desarrollado por:** Jared Hernández González - Universidad Politécnica de Texcoco (UPTex)
+### Backend (Laravel)
+```bash
+cd backend
+composer install
+cp .env.example .env
+# Configura DB_DATABASE en .env
+php artisan key:generate
+php artisan migrate
+php artisan storage:link
+php artisan serve
+```
+
+## Frontend (Vue.js)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+**Desarrollado por:** Jared Hernández González - Universidad Politécnica de Texcoco (UPTex) 

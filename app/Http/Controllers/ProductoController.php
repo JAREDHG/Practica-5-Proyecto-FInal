@@ -4,48 +4,60 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Http\Resources\ProductoResource;
 
 class ProductoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return response()->json(Producto::all(), 200);
+        // Retornamos el recurso como colección
+        return ProductoResource::collection(Producto::paginate(10));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Validación de datos
+        $request->validate([
+            'nombre'  => 'required|string',
+            'precio'  => 'required|numeric',
+            'imagen'  => 'nullable|image|mimes:jpg,png,webp|max:2048', // [cite: 35, 38]
+        ]);
 
-        $producto = Producto::create($request->all());
-        return response()->json($producto, 201);
+        $data = $request->except('imagen');
+
+        // Lógica de subida de imagen [cite: 41, 42, 43]
+        if ($request->hasFile('imagen')) {
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        $producto = Producto::create($data);
+        return new ProductoResource($producto); // [cite: 45]
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Producto $producto)
     {
-        return response()->json($producto, 200);
+        return new ProductoResource($producto);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Producto $producto)
     {
-        $producto->update($request->all());
-        return response()->json($producto, 200);
+        
+        $request->validate([
+            'nombre'  => 'sometimes|string',
+            'precio'  => 'sometimes|numeric',
+            'stock' => 'sometimes|numeric',
+//            'imagen'  => 'nullable|image|mimes:jpg,png,webp|max:2048',
+        ]);
+
+        $data = $request->only(['nombre', 'descripcion', 'precio', 'stock']);
+
+        if ($request->hasFile('imagen')) {
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        $producto->update($data);
+        return new ProductoResource($producto);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Producto $producto)
     {
         $producto->delete();

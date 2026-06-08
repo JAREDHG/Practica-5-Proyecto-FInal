@@ -21,13 +21,20 @@
         <p class="text-muted mb-2 small text-uppercase fw-bold">Navegación</p>
         <ul class="nav flex-column gap-2">
           <li class="nav-item">
-            <router-link to="/admin" class="nav-link text-white rounded p-2 text-decoration-none d-block" exact-active-class="bg-primary shadow-sm">
+            <router-link to="/admin/dashboard" class="nav-link text-white rounded p-2 text-decoration-none d-block" exact-active-class="bg-primary shadow-sm">
               📊 Vista General
             </router-link>
           </li>
+          
+          <li class="nav-item mt-3 text-muted small text-uppercase fw-bold">Inventario</li>
           <li class="nav-item">
-            <router-link to="/admin/productos" class="nav-link text-white rounded p-2 text-decoration-none d-block" exact-active-class="bg-primary shadow-sm">
-              📦 Gestión de Inventario
+            <router-link to="/admin/crear" class="nav-link text-white rounded p-2 text-decoration-none d-block" exact-active-class="bg-primary shadow-sm">
+              ➕ Crear Producto
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/admin/editar" class="nav-link text-white rounded p-2 text-decoration-none d-block" exact-active-class="bg-primary shadow-sm">
+              📝 Editar / Eliminar
             </router-link>
           </li>
         </ul>
